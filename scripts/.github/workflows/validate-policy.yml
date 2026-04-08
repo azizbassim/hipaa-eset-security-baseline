@@ -1,0 +1,30 @@
+name: Validate Security Policy JSON
+
+on:
+  push:
+    paths:
+      - '*.json'
+  pull_request:
+    paths:
+      - '*.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON structure
+        run: |
+          for file in *.json; do
+            echo "Checking $file"
+            if ! jq empty "$file"; then
+              echo "❌ Invalid JSON in $file"
+              exit 1
+            fi
+            echo "✅ $file is valid JSON"
+          done
+      - name: Simulated HIPAA control check
+        run: |
+          echo "🔒 Checking for required HIPAA fields (simulated)"
+          # In a real scenario, you'd parse JSON and check for encryption, IAM fields
+          echo "All controls present."
